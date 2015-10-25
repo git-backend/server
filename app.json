@@ -1,0 +1,5 @@
+{
+  "name": "GitBackend Server",
+  "description": "GitBackend Server provides an API for cloning, editing and pushing data to a git repository.",
+  "keywords": ["git", "backend"]
+}
