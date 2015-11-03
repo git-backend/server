@@ -36,11 +36,11 @@ error do
   { error: { type: err.class, message: err.message } }.to_json
 end
 
-get '/clone' do
+post '/clone' do
   Tasks.clone(session[:hex], ENV['REMOTE_URL'], ENV['REMOTE_BRANCH']).to_json
 end
 
-get '/push' do
+post '/push' do
   Tasks.push(session[:hex], params['message'] || 'GitBackend changes...').to_json
 end
 
@@ -48,14 +48,14 @@ get '/ls' do
   Tasks.ls(session[:hex]).to_json
 end
 
-get '/*' do |path|
+get '/read/*' do |path|
   Tasks.read(session[:hex], path).to_json
 end
 
-post '/*' do |path|
+post '/write/*' do |path|
   Tasks.write(session[:hex], path, request.body.read).to_json
 end
 
-delete '/*' do |path|
+post '/delete/*' do |path|
   Tasks.delete(session[:hex], path).to_json
 end

@@ -24,7 +24,7 @@ GitBackend Server relies on the following environment variables:
 
 The server has the following routes:
 
-### `GET /clone`
+### `POST /clone`
 
 This clones the repo into the server's 'tmp' directory. Each session is given
 it's own unique subdirectory to work in.
@@ -32,7 +32,7 @@ it's own unique subdirectory to work in.
 The route will respond with a list of the files in the repo, like the `GET /ls`
 route below.
 
-### `GET /push`
+### `POST /push`
 
 This pushes any changes back to the remote origin. It accepts a `message` URL
 query to be used as a commit message. If not supplied, the default commit
@@ -50,7 +50,7 @@ This route responds with a list of all the files in the local clone of the repo,
 }
 ```
 
-### `GET /*`
+### `GET /read/*`
 
 This route will respond with the content of a file, e.g.
 
@@ -67,11 +67,11 @@ the url as the path to find the file, e.g.
 GET https://my-awesom-server.io/assets/app.js
 ```
 
-### `POST /*`
+### `POST /write/*`
 
 This replaces or creates a file with the contents of the request body.
 
-### `DELETE /*`
+### `POST /delete/*`
 
 This deletes a file.
 
