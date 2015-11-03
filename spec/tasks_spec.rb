@@ -23,35 +23,31 @@ describe Tasks do
 
   it '.clone' do
     res = Tasks.clone(hex, remote.base, 'master')
-    expect(res).to eql({ files: ['index.html'] })
+    expect(res).to eql(['index.html'])
   end
 
   it '.ls' do
-    res = Tasks.ls(hex)
-    expect(res).to eql({ files: ['index.html'] })
+    expect(Tasks.ls(hex)).to eql(['index.html'])
   end
 
   it '.read' do
     res = Tasks.read(hex, 'index.html')
-    expect(res).to eql({ body: '<html>Index</html>' })
+    expect(res).to eql('<html>Index</html>')
   end
 
   it '.write' do
-    res = Tasks.write(hex, logo_file, logo_body)
-    expect(res).to eql({})
+    Tasks.write(hex, logo_file, logo_body)
     expect(local.ls).to contain_exactly('index.html', logo_file)
     expect(local.read(logo_file)).to eql(logo_body)
   end
 
   it '.delete' do
-    res = Tasks.delete(hex, 'index.html')
-    expect(res).to eql({})
+    Tasks.delete(hex, 'index.html')
     expect(local.ls).to contain_exactly(logo_file)
   end
 
   it '.push' do
-    res = Tasks.push(hex, 'Added circle and deletes index')
-    expect(res).to eql({})
+    Tasks.push(hex, 'Added circle and deletes index')
     remote.checkout('master')
     expect(remote.ls).to contain_exactly(logo_file)
     expect(remote.read(logo_file)).to eql(logo_body)

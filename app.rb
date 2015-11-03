@@ -27,35 +27,44 @@ configure do
 end
 
 before do
-  content_type :json
   session[:hex] ||= SecureRandom.hex
 end
 
 error do
+  content_type :json
   err = env['sinatra.error']
   { error: { type: err.class, message: err.message } }.to_json
 end
 
 post '/clone' do
-  Tasks.clone(session[:hex], ENV['REMOTE_URL'], ENV['REMOTE_BRANCH']).to_json
+  content_type :json
+  files = Tasks.clone(session[:hex], ENV['REMOTE_URL'], ENV['REMOTE_BRANCH'])
+  { files: files }.to_json
 end
 
 post '/push' do
-  Tasks.push(session[:hex], params['message'] || 'GitBackend changes...').to_json
+  Tasks.push(session[:hex], params['message'] || 'GitBackend changes...')
+  200
 end
 
 get '/ls' do
-  Tasks.ls(session[:hex]).to_json
+  content_type :json
+  files = Tasks.ls(session[:hex])
+  { files: files }.to_json
 end
 
 get '/read/*' do |path|
-  Tasks.read(session[:hex], path).to_json
+  content_type :json
+  content = Tasks.read(session[:hex], path)
+  { content: content }.to_json
 end
 
 post '/write/*' do |path|
-  Tasks.write(session[:hex], path, request.body.read).to_json
+  Tasks.write(session[:hex], path, request.body.read)
+  200
 end
 
 post '/delete/*' do |path|
-  Tasks.delete(session[:hex], path).to_json
+  Tasks.delete(session[:hex], path)
+  200
 end

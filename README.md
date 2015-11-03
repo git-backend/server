@@ -38,8 +38,6 @@ This pushes any changes back to the remote origin. It accepts a `message` URL
 query to be used as a commit message. If not supplied, the default commit
 message "GitBackend changes" is used.
 
-The route will respond with an empty JSON object if successful.
-
 ### `GET /ls`
 
 This route responds with a list of all the files in the local clone of the repo, e.g.
@@ -56,7 +54,7 @@ This route will respond with the content of a file, e.g.
 
 ```json
 {
-  "body": "console.log('hello world!');"
+  "content": "console.log('hello world!');"
 }
 ```
 
