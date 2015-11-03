@@ -19,7 +19,7 @@ describe Tasks do
   let!(:hex) { 'fhur7fh98e98234hne' }
   let!(:logo_file) { 'assets/img/logo.svg' }
   let!(:logo_body) { '<svg><circle cx="40" cy="40" r="40" /></svg>' }
-  let!(:local) { Repo.new(TMP + hex) }
+  let!(:local) { Repo.new(TMP + hex).open }
 
   it '.clone' do
     res = Tasks.clone(hex, remote.base, 'master')

@@ -1,30 +1,12 @@
+require 'womb'
 require_relative 'repo'
 require_relative 'constants'
 
-module Tasks
-  class << self
-    def clone(hex, repo, branch)
-      Repo.new(TMP + hex).clear.clone(repo).checkout(branch).ls
-    end
-
-    def push(hex, message)
-      Repo.new(TMP + hex).add.commit(message).push
-    end
-
-    def ls(hex)
-      Repo.new(TMP + hex).ls
-    end
-
-    def read(hex, path)
-      Repo.new(TMP + hex).read(path)
-    end
-
-    def write(hex, path, body)
-      Repo.new(TMP + hex).write(path, body)
-    end
-
-    def delete(hex, path)
-      Repo.new(TMP + hex).delete(path)
-    end
-  end
-end
+Tasks = Womb[Module.new]
+  .assign(:clone) { |hex, url, branch| Repo.new(TMP + hex).clear.clone(url).checkout(branch).ls }
+  .assign(:push) { |hex, message| Repo.new(TMP + hex).open.add.commit(message).push }
+  .assign(:ls) { |hex| Repo.new(TMP + hex).open.ls }
+  .assign(:read) { |hex, path| Repo.new(TMP + hex).read(path) }
+  .assign(:write) { |hex, path, body| Repo.new(TMP + hex).write(path, body) }
+  .assign(:delete) { |hex, path| Repo.new(TMP + hex).delete(path) }
+  .birth
