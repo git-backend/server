@@ -1,55 +1,49 @@
-require 'repo'
 require 'tasks'
-require 'constants'
+require 'pathname'
 
 describe Tasks do
-  let!(:remote) do
-    Repo.new(TMP + 'remote')
-        .clear
-        .init
-        .write('index.html', '<html>Index</html>')
-        .add
-        .commit('Initial commit')
-        .branch('with-about')
-        .write('about.html', '<html>About</html>')
-        .add
-        .commit('Added about page')
+  tmp = Pathname.new('../../tmp').expand_path(__FILE__)
+  remote = TmpFolder.new('remote')
+  remote_repo = nil
+  hex = 'fhur7fh98e98234hne'
+  logo = '<svg><circle cx="40" cy="40" r="40" /></svg>'
+  logo_file = 'assets/img/logo.svg'
+  local = TmpFolder.new(hex)
+  let(:local_repo) { local.git.open }
+
+  before(:all) do
+    tmp.mkpath
+    tmp.children.each(&:rmtree)
+    remote.clear.write('index.html', '<html>Index</html>')
+    remote_repo = remote.git.init.add.commit('Initial commit')
+    remote.write('about.html', '<html>About</html>')
+    remote_repo.branch('with-about').add.commit('Added about page')
   end
 
-  let!(:hex) { 'fhur7fh98e98234hne' }
-  let!(:logo_file) { 'assets/img/logo.svg' }
-  let!(:logo_body) { '<svg><circle cx="40" cy="40" r="40" /></svg>' }
-  let!(:local) { Repo.new(TMP + hex).open }
+  it 'successfully completes tasks' do
+    # it clones
+    res = Tasks.clone(hex, (tmp + 'remote').to_path, 'master')
+    expect(res).to contain_exactly('index.html')
 
-  it '.clone' do
-    res = Tasks.clone(hex, remote.base, 'master')
-    expect(res).to eql(['index.html'])
-  end
+    # it lists files
+    expect(Tasks.ls(hex)).to contain_exactly('index.html')
 
-  it '.ls' do
-    expect(Tasks.ls(hex)).to eql(['index.html'])
-  end
+    # it reads
+    expect(Tasks.read(hex, 'index.html')).to eql('<html>Index</html>')
 
-  it '.read' do
-    res = Tasks.read(hex, 'index.html')
-    expect(res).to eql('<html>Index</html>')
-  end
+    # it writes
+    Tasks.write(hex, logo_file, logo)
+    expect(local_repo.ls).to contain_exactly('index.html', logo_file)
+    expect(local.read(logo_file)).to eql(logo)
 
-  it '.write' do
-    Tasks.write(hex, logo_file, logo_body)
-    expect(local.ls).to contain_exactly('index.html', logo_file)
-    expect(local.read(logo_file)).to eql(logo_body)
-  end
-
-  it '.delete' do
+    # it deletes
     Tasks.delete(hex, 'index.html')
-    expect(local.ls).to contain_exactly(logo_file)
-  end
+    expect(local_repo.ls).to contain_exactly(logo_file)
 
-  it '.push' do
+    # it pushes
     Tasks.push(hex, 'Added circle and deletes index')
-    remote.checkout('master')
-    expect(remote.ls).to contain_exactly(logo_file)
-    expect(remote.read(logo_file)).to eql(logo_body)
+    remote_repo.checkout('master')
+    expect(remote_repo.ls).to contain_exactly(logo_file)
+    expect(remote.read(logo_file)).to eql(logo)
   end
 end

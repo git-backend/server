@@ -1,12 +1,11 @@
 require 'womb'
-require_relative 'repo'
-require_relative 'constants'
+require_relative 'tmp_folder'
 
 Tasks = Womb[Module.new]
-  .assign(:clone) { |hex, url, branch| Repo.new(TMP + hex).clear.clone(url).checkout(branch).ls }
-  .assign(:push) { |hex, message| Repo.new(TMP + hex).open.add.commit(message).push }
-  .assign(:ls) { |hex| Repo.new(TMP + hex).open.ls }
-  .assign(:read) { |hex, path| Repo.new(TMP + hex).read(path) }
-  .assign(:write) { |hex, path, body| Repo.new(TMP + hex).write(path, body) }
-  .assign(:delete) { |hex, path| Repo.new(TMP + hex).delete(path) }
+  .assign(:clone)  { |hex, url, branch| TmpFolder.new(hex).clear.git.clone(url).checkout(branch).ls }
+  .assign(:push)   { |hex, message|     TmpFolder.new(hex).git.open.add.commit(message).push        }
+  .assign(:ls)     { |hex|              TmpFolder.new(hex).git.open.ls                              }
+  .assign(:read)   { |hex, path|        TmpFolder.new(hex).read(path)                               }
+  .assign(:write)  { |hex, path, body|  TmpFolder.new(hex).write(path, body)                        }
+  .assign(:delete) { |hex, path|        TmpFolder.new(hex).delete(path)                             }
   .birth

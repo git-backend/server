@@ -1,6 +1,5 @@
-require_relative 'lib/constants'
+require_relative 'lib/tmp_folder'
 
 task :clear do
-  TMP.mkpath
-  TMP.children.each(&:rmtree)
+  TmpFolder.new.clear
 end
