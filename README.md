@@ -2,6 +2,10 @@
 
 GitBackend Server provides an API for cloning, editing and pushing data to a git repository.
 
+## Example
+
+[Simple UI](https://github.com/git-backend/simple-ui)
+
 ## Installation
 
 The easiest way to deploy is to use this "deploy to heroku" button:
