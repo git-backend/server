@@ -61,7 +61,7 @@ This route will respond with the content of a file, e.g.
 It uses the path given as the url as the path to find the file, e.g.
 
 ```
-GET https://my-awesom-server.io/assets/app.js
+GET https://my-awesom-server.io/read/assets/app.js
 ```
 
 ### `POST /write/*`
